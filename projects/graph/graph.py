@@ -7,74 +7,116 @@ class Graph:
 
     """Represent a graph as a dictionary of vertices mapping labels to edges."""
     def __init__(self):
-        self.vertices = {}
+        self.vertices = {};
 
     def add_vertex(self, vertex_id):
-        """
-        Add a vertex to the graph.
-        """
-        pass  # TODO
-
+        self.vertices[vertex_id] = set();
     def add_edge(self, v1, v2):
-        """
-        Add a directed edge to the graph.
-        """
-        pass  # TODO
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1].add(v2);
+        else:
+            raise IndexError("That vertex does not exist!");
 
     def get_neighbors(self, vertex_id):
-        """
-        Get all neighbors (edges) of a vertex.
-        """
-        pass  # TODO
+        return self.vertices[vertex_id];
 
     def bft(self, starting_vertex):
-        """
-        Print each vertex in breadth-first order
-        beginning from starting_vertex.
-        """
-        pass  # TODO
+
+        tv = Queue();
+
+        v = set();
+        
+        tv.enqueue(starting_vertex);
+
+        while tv.size() > 0:
+            n = tv.dequeue();
+            if n not in v:
+                print(n);
+                v.add(n);
+                for a in self.vertices[n]:
+                    tv.enqueue(a);
 
     def dft(self, starting_vertex):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
-        """
-        pass  # TODO
+        
+        tv = Stack();
 
-    def dft_recursive(self, starting_vertex):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
+        v = set();
+        
+        tv.push(starting_vertex);
 
-        This should be done using recursion.
-        """
-        pass  # TODO
+        while tv.size() > 0:
+            n = tv.pop();
+            if n not in v:
+                print(n);
+                v.add(n);
+                for a in self.vertices[n]:
+                    tv.push(a);
+
+    def dft_recursive(self, starting_vertex, visited):
+        if starting_vertex not in visited:
+            print(starting_vertex);
+            visited.append(starting_vertex);
+            for a in self.vertices[starting_vertex]:
+                self.dft_recursive(a, visited);
 
     def bfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing the shortest path from
-        starting_vertex to destination_vertex in
-        breath-first order.
-        """
-        pass  # TODO
+        
+        tv = Queue();
+
+        v = set();
+        
+        tv.enqueue([starting_vertex]);
+
+        while tv.size() > 0:
+            p = tv.dequeue();
+            if p is None:
+                continue;
+            if p[len(p) - 1] == destination_vertex:
+                return p;
+            elif p[len(p) - 1] not in v:
+                v.add(p[len(p) - 1]);
+                for a in self.vertices[p[len(p) - 1]]:
+                    b = p.copy();
+                    b.append(a);
+                    tv.enqueue(b);
 
     def dfs(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
-        """
-        pass  # TODO
+        tv = Stack();
 
-    def dfs_recursive(self, starting_vertex, destination_vertex):
-        """
-        Return a list containing a path from
-        starting_vertex to destination_vertex in
-        depth-first order.
+        v = set();
+        
+        tv.push([starting_vertex]);
 
-        This should be done using recursion.
-        """
-        pass  # TODO
+        while tv.size() > 0:
+            p = tv.pop();
+            if p is None:
+                continue;
+            if p[len(p) - 1] == destination_vertex:
+                return p;
+            elif p[len(p) - 1] not in v:
+                v.add(p[len(p) - 1]);
+                for a in self.vertices[p[len(p) - 1]]:
+                    b = p.copy();
+                    b.append(a);
+                    tv.push(b);
+
+    def dfs_recursive(self, starting_vertex, destination_vertex, s, visited):
+        # s.push([starting_vertex]);
+        # p = s.pop();
+        print('aaaaaaaaa 4: ' + str(s));
+        s.append([starting_vertex]);
+        if s[len(s) - 1][len(s[len(s) - 1]) - 1] == destination_vertex:
+            return s[len(s) - 1];
+        elif s[len(s) - 1][len(s[len(s) - 1]) - 1] not in visited:
+            print('aaaaaa: ' + str(s[len(s) - 1][len(s[len(s) - 1]) - 1]))
+            print('aaaaaa 2: ' + str(s[len(s) - 1]))
+            visited.append(s[len(s) - 1][len(s[len(s) - 1]) - 1]);
+            for a in self.vertices[s[len(s) - 1][len(s[len(s) - 1]) - 1]]:
+                b = s[len(s) - 1].copy();
+                b.append(a);
+                print('aaaaa 3: ' + str(b));
+                s.append(b);
+                self.dfs_recursive(a, destination_vertex, b, visited);
 
 if __name__ == '__main__':
     graph = Graph()  # Instantiate your graph
@@ -118,6 +160,7 @@ if __name__ == '__main__':
         1, 2, 4, 3, 7, 6, 5
         1, 2, 4, 3, 7, 5, 6
     '''
+    print('BFT')
     graph.bft(1)
 
     '''
@@ -127,8 +170,10 @@ if __name__ == '__main__':
         1, 2, 4, 7, 6, 3, 5
         1, 2, 4, 6, 3, 5, 7
     '''
+    print('DFT');
     graph.dft(1)
-    graph.dft_recursive(1)
+    print('DFT RECURSIVE');
+    graph.dft_recursive(1, [])
 
     '''
     Valid BFS path:
@@ -142,4 +187,4 @@ if __name__ == '__main__':
         [1, 2, 4, 7, 6]
     '''
     print(graph.dfs(1, 6))
-    print(graph.dfs_recursive(1, 6))
+    print(graph.dfs_recursive(1, 6, [], []))
